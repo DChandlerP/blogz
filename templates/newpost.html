@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form method="post">
+    <label for="title"><b>Title:</b> </label>
+    <br>
+    <input type="text" name="title" value="">
+    <br>
+    <label for="post"><b>New Post:</b></label>
+    <br>
+    <textarea name="post" value = ""></textarea>
+    <br>
+    <input type="submit" value="Submit Post">
+</form>
+
+{% endblock %}
