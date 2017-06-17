@@ -6,10 +6,13 @@
     <br>
     <input type="text" name="title" value="">
     <br>
-    <label for="post"><b>New Post:</b></label>
+    <span class="error">{{title_error}}</span>
     <br>
-    <textarea name="post" value = ""></textarea>
+    <label for="body"><b>New Post:</b></label>
     <br>
+    <textarea name="body" value = ""></textarea>
+    <br>
+    <span class="error">{{body_error}}</span>
     <input type="submit" value="Submit Post">
 </form>
 
