@@ -28,6 +28,7 @@ class User(db.Model):
     def __init__(self, email, password):
         self.email = email
         self.password = password
+        #blogs
 
 @app.before_request
 def require_login():
@@ -57,21 +58,32 @@ def register():
         email = request.form['email']
         password = request.form['password']
         verify = request.form['verify']
+        #Errors Displayed Empty as Default
+        password_error = ""
+        email_error = ""
 
-        # TODO - validate user's data using User Signup code
-
-        existing_user = User.query.filter_by(email=email).first()
-        if not existing_user:
-            new_user = User(email, password)
-            db.session.add(new_user)
-            db.session.commit()
-            session['email'] = email
-            return redirect('/')
-        else:
-            # TODO - user better response messaging
-            return "<h1>Duplicate user</h1>"
-
-    return render_template('signup.html')
+        if not email or email.iswhitespace():
+            email_error = "Field Left Blank"
+        if not is_email_valid:
+            email_error = "Not a Valid Email Address"
+        if not password or password.iswhitespace():
+            password_error = "Field Left Blank"
+        if not does_pw_match(password, verify):
+            password_error = "Passwords didn't match"
+        
+        if not email_error and not password_error:
+            existing_user = User.query.filter_by(email=email).first()
+            if not existing_user:
+                new_user = User(email, password)
+                db.session.add(new_user)
+                db.session.commit()
+                session['email'] = email
+                return redirect('/')
+            else:
+                # TODO - user better response messaging
+                return "<h1>Duplicate user</h1>"
+        else: render_template('signup.html', email_error= email_error, password_error = password_error)          
+    return render_template('signup.html', email_error = "", password_error = "")
 
 @app.route('/blog')
 def display_blog():
@@ -138,6 +150,7 @@ def does_pw_match(password, verify):
 
 def is_email_valid(email):
     return re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email) is not None
+
 
 #Apparently you can't initialize the DB in the shell w/o this.
 if __name__ == '__main__':
