@@ -1,5 +1,6 @@
 from flask import Flask, request, redirect, render_template, session, flash
 from flask_sqlalchemy import SQLAlchemy
+import re
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
@@ -57,7 +58,7 @@ def register():
         password = request.form['password']
         verify = request.form['verify']
 
-        # TODO - validate user's data
+        # TODO - validate user's data using User Signup code
 
         existing_user = User.query.filter_by(email=email).first()
         if not existing_user:
@@ -128,6 +129,15 @@ def validate():
 def logout():
     del session['email']
     return redirect('/')
+
+def does_pw_match(password, verify):
+    if password and verify:
+        return password == verify
+    else:
+        return False
+
+def is_email_valid(email):
+    return re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email) is not None
 
 #Apparently you can't initialize the DB in the shell w/o this.
 if __name__ == '__main__':
