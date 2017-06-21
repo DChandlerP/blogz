@@ -32,7 +32,6 @@ class User(db.Model):
     def __init__(self, email, password):
         self.email = email
         self.password = password
-        #blogs
 
 @app.before_request
 def require_login():
