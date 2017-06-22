@@ -34,7 +34,7 @@ class User(db.Model):
 
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'signup', 'blog', 'post', 'index' ]
+    allowed_routes = ['login', 'signup', 'blog', 'index' ]
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
@@ -95,6 +95,14 @@ def signup():
 
 @app.route('/blog')
 def blog():
+    if request.args.get('id'):
+        post_id = request.args.get('id')
+        post = Blog.query.filter(Blog.id == post_id).one()
+        return render_template('postbyid.html', post = post)
+    if request.args.get('user'):
+        user_id = request.args.get('user')
+        posts = User.query.filter(id == user_id)
+        return render_template('singleuser.html', posts = posts)
     #returns everything from the DB
     posts = Blog.query.all()
     #It's in list format so this reverses the list!

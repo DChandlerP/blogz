@@ -2,9 +2,9 @@
 
 {% block content %}
 
-    {% for user in usernames %}
-    <a href= '/post?id={{blog.owner.id}}'>
-    <h2>{{blog.owner.username}}</h2></a>
+    {% for user in users %}
+    <a href= '/post?id={{user.id}}'>
+    <h2>{{user.username}}</h2></a>
     {% endfor %}
 
 {% endblock %}
