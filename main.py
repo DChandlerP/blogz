@@ -40,6 +40,9 @@ def require_login():
 
 @app.route('/')
 def index():
+    users = User.query.all()
+    return render_template('index.html', users = users)
+    #Don't this will work like imagine. Ask TF
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
