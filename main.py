@@ -24,30 +24,29 @@ class Blog(db.Model):
 class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
-    #I'm using email as the username
-    email = db.Column(db.String(120), unique=True)
+    username = db.Column(db.String(120), unique=True)
     password = db.Column(db.String(120))
     blog = db.relationship('Blog', backref='owner')
 
-    def __init__(self, email, password):
-        self.email = email
+    def __init__(self, username, password):
+        self.username = username
         self.password = password
 
 @app.before_request
 def require_login():
     allowed_routes = ['login', 'register']
-    if request.endpoint not in allowed_routes and 'email' not in session:
+    if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
-        email = request.form['email']
+        username = request.form['username']
         password = request.form['password']
-        user = User.query.filter_by(email=email).first()
+        user = User.query.filter_by(username=username).first()
         if user and user.password == password:
-            session['email'] = email
+            session['username'] = username
             flash("Logged in")
             return redirect('/')
         else:
@@ -58,17 +57,17 @@ def login():
 @app.route('/signup', methods=['POST', 'GET'])
 def register():
     if request.method == 'POST':
-        email = request.form['email']
+        username = request.form['username']
         password = request.form['password']
         verify = request.form['verify']
         #Errors Displayed Empty as Default
         password_error = ""
-        email_error = ""
+        username_error = ""
 
-        if not email or email.iswhitespace():
-            email_error = "Field Left Blank"
-        if not is_email_valid:
-            email_error = "Not a Valid Email Address"
+        if not username or username.iswhitespace():
+            username_error = "Field Left Blank"
+        if not is_un_or_pw_valid(username):
+            username_error = "Not a Valid Username"
         if not password or password.iswhitespace():
             password_error = "Field Left Blank"
         if not is_un_or_pw_valid(password):
@@ -76,18 +75,18 @@ def register():
         if not does_pw_match(password, verify):
             password_error = "Passwords didn't match"
         
-        if not email_error and not password_error:
-            existing_user = User.query.filter_by(email=email).first()
+        if not username_error and not password_error:
+            existing_user = User.query.filter_by(username=username).first()
             if not existing_user:
-                new_user = User(email, password)
+                new_user = User(username, password)
                 db.session.add(new_user)
                 db.session.commit()
-                session['email'] = email
+                session['username'] = username
                 return redirect('/')
             else:
                 flash("Duplicate User")
-        else: render_template('signup.html', email_error= email_error, password_error = password_error)          
-    return render_template('signup.html', email_error = "", password_error = "")
+        else: render_template('signup.html', username_error= username_error, password_error = password_error)          
+    return render_template('signup.html', username_error = "", password_error = "")
 
 @app.route('/blog')
 def display_blog():
@@ -143,7 +142,7 @@ def validate():
 
 @app.route('/logout')
 def logout():
-    del session['email']
+    del session['username']
     return redirect('/')
 
 def does_pw_match(password, verify):
@@ -151,9 +150,6 @@ def does_pw_match(password, verify):
         return password == verify
     else:
         return False
-
-def is_email_valid(email):
-    return re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email) is not None
 
 def is_un_or_pw_valid(username):
     if username:
