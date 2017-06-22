@@ -35,7 +35,7 @@ class User(db.Model):
 
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'signup', 'blog', 'index' ]
+    allowed_routes = ['login', 'signup', 'blog', 'index', 'post']
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
@@ -56,9 +56,15 @@ def login():
             flash("Logged in")
             return redirect('/')
         else:
-            flash('User password incorrect, or user does not exist', 'error')
-
-    return render_template('login.html')
+            if not user:
+                username_error = "User not in database. Signup above!"
+                return render_template('login.html', username_error = username_error, password_error = "")
+            elif user.password != password:
+                password_error = "Password is incorrect"
+                return render_template('login.html', username_error = "", password_error = password_error )
+            else: 
+                return render_template('login.html', username_error = "", password_error = "")
+    return render_template('login.html', username_error = "", password_error = "")
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
