@@ -97,7 +97,8 @@ def signup():
                 return redirect('/')
             else:
                 flash("Duplicate User")
-        else: render_template('signup.html', username_error= username_error, password_error = password_error)          
+        else: 
+            return render_template('signup.html', username_error = username_error, password_error = password_error)          
     return render_template('signup.html', username_error = "", password_error = "")
 
 @app.route('/blog')
