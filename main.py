@@ -7,6 +7,7 @@ app.config['DEBUG'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://blogz:password@localhost:8889/blogz'
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
+app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RU'
 
 
 class Blog(db.Model):
@@ -110,7 +111,7 @@ def blog():
     #Flask will render the template using the list passed to it
     return render_template('blog.html', posts = posts)
 
-'''
+
 @app.route('/post', methods = ['GET'])
 def post():
     #gets id from a link I have in the /blog using get
@@ -119,7 +120,7 @@ def post():
     post = Blog.query.filter(Blog.id == post_id).one()
     # Passes one post by id to the template
     return render_template('postbyid.html', post = post)
-'''
+
 
 @app.route('/newpost', methods=['POST', 'GET'])
 def validate():
@@ -127,6 +128,8 @@ def validate():
     if request.method == "POST":
         title = request.form['title']
         body = request.form['body']
+        username = session['username']
+        owner = User.query.filter_by( username = username).first()
         title_error = ""
         body_error = ""
         #Checks if empty or just white space
@@ -138,7 +141,7 @@ def validate():
         #if there are no errors
         if not title_error and not body_error:
             #Takes Title and body and makes an object
-            post = Blog(title, body)
+            post = Blog(title, body, owner)
             #Similar to git add
             db.session.add(post)
             #Similar to git ommit
@@ -175,4 +178,3 @@ def is_un_or_pw_valid(username):
 if __name__ == '__main__':
     app.run()
 
-app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RU'
