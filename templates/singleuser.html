@@ -2,7 +2,7 @@
 
 {% block content %}
     {% for post in posts %}
-    <a href= '/post?id={{user.id}}'><h1>{{post.title}}</h1></a>
+    <a href= '/post?id={{post.id}}'><h1>{{post.title}}</h1></a>
     <p>{{post.body}}</p>
     {% endfor %}
 {% endblock %}

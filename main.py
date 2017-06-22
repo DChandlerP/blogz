@@ -98,12 +98,14 @@ def signup():
 def blog():
     if request.args.get('id'):
         post_id = request.args.get('id')
-        post = Blog.query.filter(Blog.id == post_id).one()
+        post = Blog.query.filter(id = post_id).one()
         return render_template('postbyid.html', post = post)
 
     if request.args.get('user'):
         user_id = request.args.get('user')
-        posts = User.query.filter_by(id == user_id).all()
+        owner = User.query.filter_by(id = user_id).first()
+        #Ask Max/Pertains to Question 10 on test
+        posts = Blog.query.filter_by(owner = owner).all()
         return render_template('singleuser.html', posts = posts)
     #returns everything from the DB
     posts = Blog.query.all()
