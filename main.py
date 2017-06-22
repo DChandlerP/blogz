@@ -34,10 +34,12 @@ class User(db.Model):
 
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'register']
+    allowed_routes = ['login', 'signup', 'blog', 'post' ]
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
+@app.route('/')
+def index():
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
@@ -55,7 +57,7 @@ def login():
     return render_template('login.html')
 
 @app.route('/signup', methods=['POST', 'GET'])
-def register():
+def signup():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -89,7 +91,7 @@ def register():
     return render_template('signup.html', username_error = "", password_error = "")
 
 @app.route('/blog')
-def display_blog():
+def blog():
     #returns everything from the DB
     posts = Blog.query.all()
     #It's in list format so this reverses the list!
@@ -98,7 +100,7 @@ def display_blog():
     return render_template('blog.html', posts = posts)
 
 @app.route('/post', methods = ['GET'])
-def display_post():
+def post():
     #gets id from a link I have in the /blog using get
     post_id = request.args.get('id')
     #uses the id to query only that id and store
