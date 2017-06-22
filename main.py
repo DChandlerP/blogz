@@ -69,11 +69,11 @@ def signup():
         password_error = ""
         username_error = ""
 
-        if not username or username.iswhitespace():
+        if not username or username.isspace():
             username_error = "Field Left Blank"
         if not is_un_or_pw_valid(username):
             username_error = "Not a Valid Username"
-        if not password or password.iswhitespace():
+        if not password or password.isspace():
             password_error = "Field Left Blank"
         if not is_un_or_pw_valid(password):
             password_error = "Needs to be 3 to 20 characters Long With No Whitespaces"
@@ -174,3 +174,5 @@ def is_un_or_pw_valid(username):
 #Apparently you can't initialize the DB in the shell w/o this.
 if __name__ == '__main__':
     app.run()
+
+app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RU'
