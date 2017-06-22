@@ -3,7 +3,7 @@
 {% block content %}
 
     {% for user in users %}
-    <a href= '/post?id={{user.id}}'>
+    <a href= '/blog?user={{user.id}}'>
     <h2>{{user.username}}</h2></a>
     {% endfor %}
 

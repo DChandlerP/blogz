@@ -100,9 +100,10 @@ def blog():
         post_id = request.args.get('id')
         post = Blog.query.filter(Blog.id == post_id).one()
         return render_template('postbyid.html', post = post)
+
     if request.args.get('user'):
         user_id = request.args.get('user')
-        posts = User.query.filter(id == user_id)
+        posts = User.query.filter_by(id == user_id).all()
         return render_template('singleuser.html', posts = posts)
     #returns everything from the DB
     posts = Blog.query.all()
@@ -120,6 +121,7 @@ def post():
     post = Blog.query.filter(Blog.id == post_id).one()
     # Passes one post by id to the template
     return render_template('postbyid.html', post = post)
+
 
 
 @app.route('/newpost', methods=['POST', 'GET'])
