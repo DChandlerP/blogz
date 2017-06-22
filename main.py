@@ -111,7 +111,7 @@ def blog():
     if request.args.get('user'):
         user_id = request.args.get('user')
         owner = User.query.filter_by(id = user_id).first()
-        #Ask Max/Pertains to Question 10 on test
+        
         posts = Blog.query.filter_by(owner = owner).all()
         return render_template('singleuser.html', posts = posts)
     #returns everything from the DB
