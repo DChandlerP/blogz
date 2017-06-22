@@ -110,6 +110,7 @@ def blog():
     #Flask will render the template using the list passed to it
     return render_template('blog.html', posts = posts)
 
+'''
 @app.route('/post', methods = ['GET'])
 def post():
     #gets id from a link I have in the /blog using get
@@ -118,6 +119,7 @@ def post():
     post = Blog.query.filter(Blog.id == post_id).one()
     # Passes one post by id to the template
     return render_template('postbyid.html', post = post)
+'''
 
 @app.route('/newpost', methods=['POST', 'GET'])
 def validate():
