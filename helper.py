@@ -10,7 +10,7 @@ def is_un_or_pw_valid(username):
         return re.match(r'^[\S]{3,20}$', username) is not None
     else:
         return False
-        
+
 #Apparently you can't initialize the DB in the shell w/o this.
 if __name__ == '__main__':
     app.run()
