@@ -10,6 +10,9 @@ class Blog(db.Model):
         self.title = title
         self.body = body
         self.owner = owner
+    
+    def __repr__(self):
+        return '<Title %r>' % self.title
 
 class User(db.Model):
 
@@ -21,3 +24,6 @@ class User(db.Model):
     def __init__(self, username, password):
         self.username = username
         self.password = password
+    
+    def __repr__(self):
+        return '<User %r>' % self.username

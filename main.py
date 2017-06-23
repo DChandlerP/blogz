@@ -140,12 +140,11 @@ def validate():
             #Integer by default, URLs are strings
             id = str(entry.id)
             return redirect('/post?id=' + id)
-            
         else:
             #returns templates if errors aren't blank
-            return render_template('newpost.html', body_error = body_error, title_error = title_error)
+            return render_template('newpost.html', body_error=body_error, title_error=title_error)
     else:
-        return render_template('newpost.html', title_error = "", body_error = "")
+        return render_template('newpost.html', title_error="", body_error="")
 
 @app.route('/logout')
 def logout():
