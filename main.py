@@ -1,6 +1,8 @@
 from flask import Flask, request, redirect, render_template, session, flash
 from flask_sqlalchemy import SQLAlchemy
 import re
+from helper import is_un_or_pw_valid, does_pw_match
+from models import User, Blog
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
@@ -9,41 +11,20 @@ app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RU'
 
-
-class Blog(db.Model):
-
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(80))
-    body = db.Column(db.String(1000))
-    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-
-    def __init__(self, title, body, owner):
-        self.title = title
-        self.body = body
-        self.owner = owner
-
-class User(db.Model):
-
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(120), unique=True)
-    password = db.Column(db.String(120))
-    blog = db.relationship('Blog', backref='owner')
-
-    def __init__(self, username, password):
-        self.username = username
-        self.password = password
-
 @app.before_request
 def require_login():
+    #This doesn't may to the decorators but to the functions under them
     allowed_routes = ['login', 'signup', 'blog', 'index', 'post']
+    # redirections to login only if not signed in and now in allowd paths
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
 @app.route('/')
 def index():
+    # returns everything in the DB associated with User
     users = User.query.all()
-    return render_template('index.html', users = users)
-    #Don't this will work like imagine. Ask TF
+    return render_template('index.html',users = users)
+    
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
@@ -76,6 +57,7 @@ def signup():
         password_error = ""
         username_error = ""
 
+        # Different error codes for different issues
         if not username or username.isspace():
             username_error = "Field Left Blank"
         if not is_un_or_pw_valid(username):
@@ -122,6 +104,7 @@ def blog():
     return render_template('blog.html', posts = posts)
 
 
+#Haven't I made this redundant with the code in blog?
 @app.route('/post', methods = ['GET'])
 def post():
     #gets id from a link I have in the /blog using get
@@ -140,7 +123,7 @@ def validate():
         title = request.form['title']
         body = request.form['body']
         username = session['username']
-        owner = User.query.filter_by( username = username).first()
+        owner = User.query.filter_by(username = username).first()
         title_error = ""
         body_error = ""
         #Checks if empty or just white space
@@ -174,17 +157,6 @@ def logout():
     del session['username']
     return redirect('/')
 
-def does_pw_match(password, verify):
-    if password and verify:
-        return password == verify
-    else:
-        return False
-
-def is_un_or_pw_valid(username):
-    if username:
-        return re.match(r'^[\S]{3,20}$', username) is not None
-    else:
-        return False
 #Apparently you can't initialize the DB in the shell w/o this.
 if __name__ == '__main__':
     app.run()
